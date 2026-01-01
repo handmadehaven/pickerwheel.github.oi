@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker Wheel - Random Color Generator</title>
+    <meta name="description"
+        content="Spin the Color Picker Wheel to pick a random color. Generate random hex codes and colors for design inspiration.">
+    <meta name="keywords"
+        content="color picker wheel, random color generator, hex color picker, random palette, spin for color, random hex generator">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ipickerwheel.com/color-picker-wheel.html">
+    <meta property="og:title" content="Color Picker Wheel - Random Color Generator">
+    <meta property="og:description" content="Spin the Color Picker Wheel to pick a random color for your designs.">
+    <meta property="og:image" content="https://ipickerwheel.com/images/og-color.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ipickerwheel.com/color-picker-wheel.html">
+    <meta property="twitter:title" content="Color Picker Wheel - Random Color Generator">
+    <meta property="twitter:description" content="Spin the Color Picker Wheel to pick a random color for your designs.">
+    <meta property="twitter:image" content="https://ipickerwheel.com/images/og-color.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://ipickerwheel.com/color-picker-wheel.html">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/advanced-settings.css">
+    <link rel="stylesheet" href="css/button-animations.css">
+    <style>
+        .color-preview {
+            width: 100%;
+            height: 100px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .swatch-grid {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .swatch {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .swatch:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🎨</div>
+                <div class="logo-text">Color Picker Wheel<span>Random Color Generator</span></div>
+            </a>
+            <div class="nav-icons">
+                <button class="nav-btn" id="header-dark-mode-toggle" title="Toggle Dark Mode">
+                    <span class="nav-icon">🌙</span>
+                    <span class="nav-label">Theme</span>
+                </button>
+                <button class="nav-btn" id="switch-wheel-btn" title="Switch Wheel">
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-label">Switch</span>
+                </button>
+                <button class="nav-btn" id="file-btn" title="File">
+                    <span class="nav-icon">📁</span>
+                    <span class="nav-label">File</span>
+                </button>
+                <button class="nav-btn" id="settings-nav-btn" title="Settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </button>
+                <button class="nav-btn" id="share-btn" title="Share">
+                    <span class="nav-icon">🔗</span>
+                    <span class="nav-label">Share</span>
+                </button>
+                <button class="nav-btn" id="tools-btn" title="Tools">
+                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-label">Tools</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container hero">
+        <div class="hero-grid">
+            <!-- Wheel -->
+            <div class="wheel-section">
+                <div class="wheel-container">
+                    <div id="spin-count-badge" class="spin-count-badge" style="display:none;">
+                        <span class="badge-label">SPINS</span>
+                        <span id="total-spins" class="badge-value">0</span>
+                    </div>
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel-canvas"></canvas>
+                    <div class="spin-btn-container">
+                        <button id="spin-btn" class="spin-btn pulse">SPIN</button>
+                    </div>
+                    <button id="manual-stop-btn" class="manual-stop-btn">STOP</button>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="inputs-section">
+                <div class="inputs-card">
+                    <h3>🎨 Color Options</h3>
+
+                    <div style="margin-bottom:20px;">
+                        <label class="ctrl-label">Output Mode</label>
+                        <select id="mode-sel" class="main-input" style="width:100%">
+                            <option value="single">Single Color</option>
+                            <option value="complementary">Complementary (2 Colors)</option>
+                            <option value="triadic">Triadic (3 Colors)</option>
+                            <option value="analogous">Analogous (3 Colors)</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom:20px;">
+                        <strong>Last Win Preview:</strong>
+                        <div id="preview-box" class="color-preview" style="background: #eee;"></div>
+                        <div id="harmony-swatches" class="swatch-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED SETTINGS PANEL -->
+        <div class="settings-section">
+            <button class="settings-toggle" id="advanced-settings-toggle">
+                <span>⚙️ Advanced Tool Settings</span>
+                <span id="advanced-toggle-arrow" class="toggle-arrow">▲</span>
+            </button>
+            <div class="settings-panel open" id="advanced-settings-panel">
+
+                <!-- General Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="general">
+                        <h4>⚙️ General Settings</h4>
+                        <span class="category-arrow">▲</span>
+                    </div>
+                    <div class="category-content open">
+                        <div class="setting-row">
+                            <div class="setting-label">🌙 Dark Mode</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dark-mode-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spin Behavior Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="spin-behavior">
+                        <h4>🎯 Spin Behavior</h4>
+                        <span class="category-arrow">▲</span>
+                    </div>
+                    <div class="category-content open">
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Spinning Speed Level</div>
+                                <div class="setting-description">Lvl1 (Slow) to Lvl10 (Fast)</div>
+                            </div>
+                            <div class="range-container" style="width:200px;">
+                                <input type="range" id="speed-level" min="1" max="10" value="5">
+                                <span class="range-value" id="speed-level-value">5</span>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Spinning Duration</div>
+                                <div class="setting-description">1s to 30s animation</div>
+                            </div>
+                            <div class="range-container" style="width:200px;">
+                                <input type="range" id="adv-spin-duration" min="1" max="30" value="4">
+                                <span class="range-value" id="adv-duration-value">4s</span>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Manual Stop Button</div>
+                                <div class="setting-description">Click button to stop manually</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="manual-stop-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Mystery Spin</div>
+                                <div class="setting-description">Replace names with "?" during spin</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="mystery-spin-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Spin Count</div>
+                                <div class="setting-description">Track total number of spins</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="spin-count-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Random Initial Angle</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="random-angle-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Initial Spinning</div>
+                                <div class="setting-description">Wheel rotates slowly on load</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="initial-spin-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confetti & Sound Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="confetti-sound">
+                        <h4>🎊 Confetti & Sound</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row">
+                            <div class="setting-label">Confetti on Win</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="adv-confetti-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-label">Sound Effects</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="adv-sound-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:10px;">
+                            <div class="setting-label">Custom Sounds (Premium User)</div>
+                            <div style="display:grid; gap:8px;">
+                                <div class="sub-setting">
+                                    <label style="font-size:0.75rem;">Start Sound URL</label>
+                                    <input type="text" id="sound-start-url" placeholder="URL to start audio..."
+                                        class="main-input" style="padding:4px; font-size:0.75rem;">
+                                </div>
+                                <div class="sub-setting">
+                                    <label style="font-size:0.75rem;">Spinning Sound URL</label>
+                                    <input type="text" id="sound-spin-url" placeholder="URL to tick audio..."
+                                        class="main-input" style="padding:4px; font-size:0.75rem;">
+                                </div>
+                                <div class="sub-setting">
+                                    <label style="font-size:0.75rem;">End (Win) Sound URL</label>
+                                    <input type="text" id="sound-win-url" placeholder="URL to win audio..."
+                                        class="main-input" style="padding:4px; font-size:0.75rem;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Colors Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="tool-colors">
+                        <h4>🎨 Tool Colors & Themes</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Theme Presets</div>
+                            <div class="theme-grid"
+                                style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;">
+                                <button class="theme-btn" data-theme="vibrant"
+                                    style="background: linear-gradient(90deg, #f43f5e, #fbbf24, #10b981);">Vibrant</button>
+                                <button class="theme-btn" data-theme="ocean"
+                                    style="background: linear-gradient(90deg, #0ea5e9, #3b82f6, #6366f1);">Ocean
+                                    Blue</button>
+                                <button class="theme-btn" data-theme="sunset"
+                                    style="background: linear-gradient(90deg, #f97316, #fb923c, #fcd34d);">Sunset</button>
+                                <button class="theme-btn" data-theme="nature"
+                                    style="background: linear-gradient(90deg, #16a34a, #22c55e, #86efac);">Nature</button>
+                                <button class="theme-btn" data-theme="pastel"
+                                    style="background: linear-gradient(90deg, #fda4af, #fde68a, #a7f3d0);">Pastel
+                                    Soft</button>
+                                <button class="theme-btn" data-theme="monochrome"
+                                    style="background: linear-gradient(90deg, #333, #777, #ccc);">Monochrome</button>
+                            </div>
+                        </div>
+                        <div class="setting-row" style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                            <div class="setting-label">Custom Palette (Premium)</div>
+                            <div id="color-palette" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Appearance Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="appearance">
+                        <h4>📐 Basic Appearance</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row">
+                            <div class="setting-item" style="width:100%;">
+                                <label class="setting-label">Center Image</label>
+                                <div style="display:flex; gap:5px; margin-top:8px;">
+                                    <input type="text" id="center-image-url" placeholder="Image URL..."
+                                        class="main-input" style="padding:8px; font-size:0.8rem; flex:1;">
+                                    <button id="center-image-file-btn" class="nav-btn" title="Upload"
+                                        style="padding:8px 12px;">📁</button>
+                                    <button id="center-image-clear-btn" class="nav-btn" title="Clear"
+                                        style="padding:8px 12px; color:red;">✕</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-item" style="width:100%;">
+                                <label class="setting-label">Font Style</label>
+                                <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+                                    <select id="font-family" class="main-input"
+                                        style="padding:8px; font-size:0.8rem; flex:1;">
+                                        <option value="Inter, sans-serif">Inter</option>
+                                        <option value="Arial, sans-serif">Arial</option>
+                                        <option value="'Courier New', monospace">Courier</option>
+                                        <option value="'Times New Roman', serif">Serif</option>
+                                        <option value="Impact, sans-serif">Impact</option>
+                                        <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                                    </select>
+                                    <input type="color" id="font-color" value="#333333"
+                                        style="height:38px; width:40px; cursor:pointer; border:none; background:none; padding:0;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div style="width:100%;">
+                                <div class="setting-label">Font Size</div>
+                                <div class="range-container" style="margin-top:8px;">
+                                    <span class="range-label">S</span>
+                                    <input type="range" id="font-size" min="10" max="40" value="16" style="flex:1;">
+                                    <span class="range-label">L</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div style="width:100%;">
+                                <div class="setting-label">Border Thickness</div>
+                                <div class="range-container" style="margin-top:8px;">
+                                    <span class="range-label">0</span>
+                                    <input type="range" id="border-width" min="0" max="10" value="1" style="flex:1;">
+                                    <span class="range-label">10</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div style="width:100%;">
+                                <div class="setting-label">Pointer Colors</div>
+                                <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                                    <input type="color" id="pointer-color" value="#ffffff"
+                                        style="height:35px; width:35px; border:none; background:none; cursor:pointer;">
+                                    <span class="range-label" style="font-size:0.75rem;">Outer</span>
+                                    <input type="color" id="pointer-center-color" value="#fbbf24"
+                                        style="height:35px; width:35px; border:none; background:none; cursor:pointer;">
+                                    <span class="range-label" style="font-size:0.75rem;">Inner</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Background Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="background">
+                        <h4>🖼️ Background Customization</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="background-tabs">
+                            <button class="bg-tab active" data-tab="color">Color</button>
+                            <button class="bg-tab" data-tab="image">Image (PM)</button>
+                            <button class="bg-tab" data-tab="gradient">Gradient (PM)</button>
+                        </div>
+
+                        <div class="bg-panel active" id="bg-color-panel">
+                            <div class="setting-row">
+                                <div class="setting-label">Section Background Color</div>
+                                <input type="color" id="bg-color" value="#ffffff"
+                                    style="height:40px; width:80px; cursor:pointer; border:none; background:none;">
+                            </div>
+                        </div>
+
+                        <div class="bg-panel" id="bg-image-panel">
+                            <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                                <div class="setting-label" style="margin-bottom:8px;">Background Image URL (Premium)
+                                </div>
+                                <div style="display:flex; gap:5px;">
+                                    <input type="text" id="bg-image-url" placeholder="Enter image URL..."
+                                        class="main-input" style="padding:8px; flex:1;">
+                                    <button id="bg-image-upload" class="nav-btn" title="Upload">📁</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-panel" id="bg-gradient-panel">
+                            <div class="setting-row">
+                                <div class="setting-label">Start Color</div>
+                                <input type="color" id="gradient-start" value="#667eea"
+                                    style="height:40px; width:40px; cursor:pointer; border:none; background:none;">
+                                <div class="setting-label">End Color</div>
+                                <input type="color" id="gradient-end" value="#764ba2"
+                                    style="height:40px; width:40px; cursor:pointer; border:none; background:none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spin Button Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="spin-button">
+                        <h4>🔘 Custom Spin Button (Premium)</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Button Color & Style</div>
+                            <div class="button-color-grid">
+                                <div class="color-option selected" data-color="gradient(#fbbf24, #f59e0b)"
+                                    style="background:linear-gradient(135deg, #fbbf24, #f59e0b);"></div>
+                                <div class="color-option" data-color="gradient(#6366f1, #4f46e5)"
+                                    style="background:linear-gradient(135deg, #6366f1, #4f46e5);"></div>
+                                <div class="color-option" data-color="gradient(#10b981, #059669)"
+                                    style="background:linear-gradient(135deg, #10b981, #059669);"></div>
+                                <div class="color-option" data-color="gradient(#ef4444, #dc2626)"
+                                    style="background:linear-gradient(135deg, #ef4444, #dc2626);"></div>
+                                <div class="color-option" data-color="gradient(#ec4899, #db2777)"
+                                    style="background:linear-gradient(135deg, #ec4899, #db2777);"></div>
+                                <div class="color-option" data-color="gradient(#8b5cf6, #7c3aed)"
+                                    style="background:linear-gradient(135deg, #8b5cf6, #7c3aed);"></div>
+                                <div class="color-option" data-color="#000000" style="background:#000000;"></div>
+                                <div class="color-option" data-color="#ffffff"
+                                    style="background:#ffffff; border:1px solid #ddd;"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch; margin-top:10px;">
+                            <div class="setting-label" style="margin-bottom:8px;">Spin Button Animation</div>
+                            <div class="animation-grid">
+                                <div class="animation-option selected" data-animation="pulse">Pulse</div>
+                                <div class="animation-option" data-animation="bounce">Bounce</div>
+                                <div class="animation-option" data-animation="spin">Spin</div>
+                                <div class="animation-option" data-animation="glow">Glow</div>
+                                <div class="animation-option" data-animation="shake">Shake</div>
+                                <div class="animation-option" data-animation="none">None</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner/Logo Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="banner">
+                        <h4>🏷️ Custom Banner | Logo (Premium)</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row">
+                            <div class="setting-label">Show Banner/Header</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="banner-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Custom Logo URL</div>
+                            <input type="text" id="logo-url" placeholder="URL to your logo..." class="main-input"
+                                style="padding:8px;">
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Custom Banner Text</div>
+                            <input type="text" id="banner-text" placeholder="Enter custom title..." class="main-input"
+                                style="padding:8px;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="result-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h2>🎨 Selected Color</h2>
+                <div id="winner-color-box"
+                    style="width:100px; height:100px; border-radius:50%; margin: 0 auto 20px auto; border: 4px solid #eee;">
+                </div>
+                <div id="winner-text" class="winner-text">#FFFFFF</div>
+                <div id="harmony-text" style="margin-bottom: 20px; font-size: 0.9rem; color: #666;"></div>
+                <button class="btn-primary"
+                    onclick="document.getElementById('result-modal').classList.remove('open')">Close</button>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h1>Color Picker Wheel - Random Color Generator</h1>
+            <p>Spin the wheel to pick a random color! Choose from single colors or color harmonies like complementary,
+                triadic, and analogous palettes.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container" style="text-align:center;">&copy; 2026 I Picker Wheel. All rights reserved.</div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/wheel-engine.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/advanced-settings.js"></script>
+    <script>
+        const colorNames = [
+            "#FF0000", "#FF7F00", "#FFFF00", "#7FFF00", "#00FF00", "#00FF7F",
+            "#00FFFF", "#007FFF", "#0000FF", "#7F00FF", "#FF00FF", "#FF007F"
+        ];
+
+        let wheel;
+        let advManager;
+        let advSettings;
+
+        function updateWheel() {
+            const segments = colorNames.map(function (c) {
+                return { text: c, color: c };
+            });
+            wheel.updateSegments(segments);
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+        function RGBtoHSL(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            if (max === min) h = s = 0;
+            else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return { h: h * 360, s: s * 100, l: l * 100 };
+        }
+
+        function HSLtoRGB(h, s, l) {
+            h /= 360; s /= 100; l /= 100;
+            let r, g, b;
+            if (s === 0) r = g = b = l;
+            else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1 / 6) return p + (q - p) * 6 * t;
+                    if (t < 1 / 2) return q;
+                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1 / 3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1 / 3);
+            }
+            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+        }
+
+        function showResult(winner) {
+            const hex = winner.text;
+            const rgb = hexToRgb(hex);
+            const hsl = RGBtoHSL(rgb.r, rgb.g, rgb.b);
+            const mode = document.getElementById('mode-sel').value;
+
+            document.getElementById('winner-color-box').style.background = hex;
+            document.getElementById('winner-text').textContent = hex;
+            document.getElementById('preview-box').style.background = hex;
+
+            const harmonyGrid = document.getElementById('harmony-swatches');
+            const hText = document.getElementById('harmony-text');
+            harmonyGrid.innerHTML = '';
+            hText.textContent = '';
+
+            let harmonies = [];
+            if (mode === 'complementary') {
+                const compH = (hsl.h + 180) % 360;
+                const compRgb = HSLtoRGB(compH, hsl.s, hsl.l);
+                harmonies.push(rgbToHex(compRgb.r, compRgb.g, compRgb.b));
+                hText.textContent = 'Complementary Color: ' + harmonies[0];
+            } else if (mode === 'triadic') {
+                const h1 = (hsl.h + 120) % 360;
+                const h2 = (hsl.h + 240) % 360;
+                const r1 = HSLtoRGB(h1, hsl.s, hsl.l);
+                const r2 = HSLtoRGB(h2, hsl.s, hsl.l);
+                harmonies.push(rgbToHex(r1.r, r1.g, r1.b), rgbToHex(r2.r, r2.g, r2.b));
+                hText.textContent = 'Triadic Colors: ' + harmonies.join(', ');
+            } else if (mode === 'analogous') {
+                const h1 = (hsl.h + 30) % 360;
+                const h2 = (hsl.h - 30 + 360) % 360;
+                const r1 = HSLtoRGB(h1, hsl.s, hsl.l);
+                const r2 = HSLtoRGB(h2, hsl.s, hsl.l);
+                harmonies.push(rgbToHex(r1.r, r1.g, r1.b), rgbToHex(r2.r, r2.g, r2.b));
+                hText.textContent = 'Analogous Colors: ' + harmonies.join(', ');
+            }
+
+            harmonies.forEach(function (c) {
+                const d = document.createElement('div');
+                d.className = 'swatch';
+                d.style.background = c;
+                d.title = c;
+                harmonyGrid.appendChild(d);
+            });
+
+            document.getElementById('result-modal').classList.add('open');
+
+            advManager.hideManualStopButton();
+            advManager.incrementSpinCount();
+
+            if (advSettings.confetti) Utils.triggerConfetti();
+            if (advSettings.sound) Utils.playSound('win');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            wheel = new PickerWheel('wheel-canvas', {
+                onSpinStart: () => {
+                    if (advSettings.sound) Utils.playSound('start');
+                },
+                onSpinEnd: showResult
+            });
+
+            // Advanced Settings
+            advManager = initAdvancedSettings(wheel, 'color-picker-advanced');
+            advSettings = advManager.settings;
+
+            updateWheel();
+
+            document.getElementById('spin-btn').addEventListener('click', function () {
+                advManager.showManualStopButton();
+                wheel.spin(advSettings.duration * 1000, advSettings.speedLevel);
+            });
+        });
+    </script>
+</body>
+
+</html>

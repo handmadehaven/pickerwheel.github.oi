@@ -1,0 +1,103 @@
+<!-- Settings Section - Reusable Customization Panel -->
+<!-- Add this section after the modal and before "Other Tools" -->
+<div class="settings-section">
+    <button class="settings-toggle" id="settings-toggle">
+        <span>⚙️ Customization Settings</span>
+        <span id="toggle-arrow" class="toggle-arrow">▼</span>
+    </button>
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label for="spin-duration">Spin Duration</label>
+                <div class="range-container">
+                    <span class="range-label">1.5s</span>
+                    <input type="range" id="spin-duration" min="1.5" max="8" step="0.5" value="4">
+                    <span class="range-label">8s</span>
+                    <span class="range-value" id="duration-value">4s</span>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label for="spin-speed">Spin Speed</label>
+                <div class="range-container">
+                    <span class="range-label">1x</span>
+                    <input type="range" id="spin-speed" min="1" max="10" value="5">
+                    <span class="range-label">10x</span>
+                    <span class="range-value" id="speed-value">5x</span>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label for="confetti-toggle">Confetti on Win</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="confetti-toggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <!-- APPEARANCE CONTROLS -->
+            <div class="setting-item" style="grid-column: 1 / -1;">
+                <label>Theme Colors</label>
+                <div id="color-palette" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+            </div>
+
+            <div class="setting-item">
+                <label>Center Image</label>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="center-image-url" placeholder="Image URL..." class="main-input"
+                        style="padding:8px; font-size:0.8rem;">
+                    <button id="center-image-file-btn" class="nav-btn" title="Upload"
+                        style="padding:8px 12px;">📁</button>
+                    <button id="center-image-clear-btn" class="nav-btn" title="Clear"
+                        style="padding:8px 12px; color:red;">✕</button>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>Font Style</label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <select id="font-family" class="main-input" style="padding:8px; font-size:0.8rem;">
+                        <option value="Inter, sans-serif">Inter</option>
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Courier New', monospace">Courier</option>
+                        <option value="'Times New Roman', serif">Serif</option>
+                        <option value="Impact, sans-serif">Impact</option>
+                        <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                    </select>
+                    <input type="color" id="font-color" value="#333333"
+                        style="height:38px; width:40px; cursor:pointer; border:none; background:none; padding:0;">
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>Font Size</label>
+                <div class="range-container">
+                    <span class="range-label">S</span>
+                    <input type="range" id="font-size" min="10" max="40" value="16">
+                    <span class="range-label">L</span>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>Border Thickness</label>
+                <div class="range-container">
+                    <span class="range-label">0</span>
+                    <input type="range" id="border-width" min="0" max="10" value="1">
+                    <span class="range-label">10</span>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <label>Pointer</label>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="color" id="pointer-color" value="#ffffff"
+                        style="height:30px; width:30px; border:none; background:none; cursor:pointer;">
+                    <span class="range-label" style="font-size:0.75rem;">Outer</span>
+                    <input type="color" id="pointer-center-color" value="#fbbf24"
+                        style="height:30px; width:30px; border:none; background:none; cursor:pointer;">
+                    <span class="range-label" style="font-size:0.75rem;">Inner</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

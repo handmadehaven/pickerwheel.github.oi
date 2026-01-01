@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Comment Picker - Free Giveaway Tool</title>
+    <meta name="description"
+        content="Free Instagram Comment Picker for giveaways and contests. Pick a random winner from your Instagram comments fairly and easily.">
+    <meta name="keywords"
+        content="instagram comment picker, random comment picker, instagram giveaway tool, free comment picker, contest winner generator">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ipickerwheel.com/instagram-comment-picker.html">
+    <meta property="og:title" content="Instagram Comment Picker - Free Giveaway Tool">
+    <meta property="og:description"
+        content="Free Instagram Comment Picker for giveaways and contests. Pick a random winner fairly.">
+    <meta property="og:image" content="https://ipickerwheel.com/images/og-instagram.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ipickerwheel.com/instagram-comment-picker.html">
+    <meta property="twitter:title" content="Instagram Comment Picker - Free Giveaway Tool">
+    <meta property="twitter:description" content="Free Instagram Comment Picker for giveaways and contests.">
+    <meta property="twitter:image" content="https://ipickerwheel.com/images/og-instagram.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://ipickerwheel.com/instagram-comment-picker.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .ig-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .ig-input input {
+            flex: 1;
+        }
+
+        .comment-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 6px;
+        }
+
+        .comment-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .winner-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            margin: 0 auto 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-dark);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <div
+                    style="width:40px;height:40px;background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;">
+                    📸</div>
+                <div class="logo-text">Instagram Comment Picker<span>Giveaway Winner Selector</span></div>
+            </a>
+            <div class="nav-icons">
+                <button class="nav-btn" id="switch-wheel-btn" title="Switch Wheel">
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-label">Switch</span>
+                </button>
+                <button class="nav-btn" id="file-btn" title="File">
+                    <span class="nav-icon">📁</span>
+                    <span class="nav-label">File</span>
+                </button>
+                <button class="nav-btn" id="settings-nav-btn" title="Settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </button>
+                <button class="nav-btn" id="share-btn" title="Share">
+                    <span class="nav-icon">🔗</span>
+                    <span class="nav-label">Share</span>
+                </button>
+                <button class="nav-btn" id="tools-btn" title="Tools">
+                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-label">Tools</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container hero">
+        <div class="hero-grid">
+            <div class="wheel-section">
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel-canvas"></canvas>
+                    <div class="spin-btn-container"><button id="spin-btn" class="spin-btn">SPIN</button></div>
+                </div>
+            </div>
+
+            <div class="inputs-section">
+                <div class="inputs-card" id="stage-1">
+                    <h3>🔗 Load Comments</h3>
+                    <p style="color:#666; margin-bottom:15px;">Load demo data to see how it works</p>
+
+                    <div class="ig-input">
+                        <input type="text" id="username-input" class="main-input" placeholder="@username or post URL">
+                        <button id="search-btn" class="btn-primary">Search</button>
+                    </div>
+
+                    <div style="text-align:center; margin-top:20px;">
+                        <button id="demo-btn" class="tool-btn">🎲 Load Demo Data</button>
+                    </div>
+                </div>
+
+                <div class="inputs-card hidden" id="stage-2">
+                    <h3>⚙️ Filter & Spin</h3>
+
+                    <div id="loading" class="loading">
+                        <div class="loading-spinner"></div>
+                        <div>Loading comments...</div>
+                    </div>
+
+                    <div id="filters" class="hidden">
+                        <div style="margin-bottom:15px; color: green;">✅ <span id="comment-count">0</span> comments
+                            loaded</div>
+
+                        <div style="margin-bottom:15px;">
+                            <label><input type="checkbox" id="filter-duplicates" checked> Filter Duplicate Users</label>
+                        </div>
+
+                        <button id="load-wheel-btn" class="btn-primary" style="width:100%">Load Wheel</button>
+
+                        <div id="comment-list" class="comment-list" style="margin-top:15px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h2>🎉 Winner!</h2>
+                <div class="winner-avatar"></div>
+                <div id="winner-text" class="winner-text">@username</div>
+                <div id="winner-quote" style="font-style: italic; color: #666; margin-top: 10px;">"Their comment here"
+                </div>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+                    <button class="btn-primary"
+                        onclick="document.getElementById('result-modal').classList.remove('open')">Done</button>
+                    <button class="tool-btn" id="disqualify-btn">Disqualify & Respin</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h1>Instagram Comment Picker Wheel</h1>
+            <p>Pick a random winner from Instagram comments for your giveaways. Fair, fun, and easy to use!</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container" style="text-align:center;">&copy; 2026 I Picker Wheel. All rights reserved.</div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/wheel-engine.js"></script>
+    <script src="js/navigation.js"></script>
+    <script>
+        const mockComments = [
+            { id: '1', username: '@fashion_lover', comment: 'Amazing giveaway! 🎉 @bestie @friend' },
+            { id: '2', username: '@travel_addict', comment: 'Would love to win this! @mom @dad @sis' },
+            { id: '3', username: '@foodie_life', comment: 'Pick me please! 🙏 @foodfriend' },
+            { id: '4', username: '@fitness_guru', comment: 'This is incredible! @gymbuddy @trainer' },
+            { id: '5', username: '@art_creator', comment: 'Love this so much! @artfriend' },
+            { id: '6', username: '@music_fan', comment: 'Fingers crossed! 🤞 @bandmate @producer' },
+            { id: '7', username: '@book_worm', comment: 'I need this in my life! @readingbuddy' },
+            { id: '8', username: '@tech_geek', comment: 'Awesome giveaway @techfriend @developer' },
+            { id: '9', username: '@nature_lover', comment: 'So generous! @hikingpal' },
+            { id: '10', username: '@pet_parent', comment: 'My dog would love this! @dogfriend' },
+            { id: '11', username: '@coffee_addict', comment: 'Need this for morning motivation!' },
+            { id: '12', username: '@gamer_pro', comment: "Let's go! @gamerbuddy @streamfriend" },
+            { id: '13', username: '@yoga_life', comment: 'Namaste 🧘 @yogafriend' },
+            { id: '14', username: '@cooking_mom', comment: 'Would make amazing meals! @familyaccount' },
+            { id: '15', username: '@photo_enthusiast', comment: 'Great shot! @photofriend' }
+        ];
+
+        let allComments = [];
+        let filteredComments = [];
+        let wheel;
+        let currentWinner = null;
+
+        function simulateLoad() {
+            document.getElementById('stage-1').classList.add('hidden');
+            document.getElementById('stage-2').classList.remove('hidden');
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('filters').classList.add('hidden');
+
+            setTimeout(function () {
+                allComments = mockComments.slice();
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('filters').classList.remove('hidden');
+                document.getElementById('comment-count').textContent = allComments.length;
+                renderCommentList();
+            }, 1500);
+        }
+
+        function renderCommentList() {
+            const listEl = document.getElementById('comment-list');
+            listEl.innerHTML = '';
+            const toShow = filteredComments.length > 0 ? filteredComments : allComments;
+
+            toShow.slice(0, 15).forEach(function (c) {
+                const div = document.createElement('div');
+                div.className = 'comment-item';
+                div.innerHTML = '<div class="avatar"></div><div><strong>' + c.username + '</strong><div style="color:#666; font-size:0.85rem;">' + c.comment.slice(0, 30) + '...</div></div>';
+                listEl.appendChild(div);
+            });
+        }
+
+        function loadWheel() {
+            filteredComments = allComments.slice();
+
+            if (document.getElementById('filter-duplicates').checked) {
+                const seen = {};
+                filteredComments = filteredComments.filter(function (c) {
+                    if (seen[c.username]) return false;
+                    seen[c.username] = true;
+                    return true;
+                });
+            }
+
+            renderCommentList();
+
+            const segments = filteredComments.map(function (c) {
+                return { text: c.username, id: c.id };
+            });
+            wheel.updateSegments(segments);
+        }
+
+        function showResult(winner) {
+            const comment = filteredComments.find(function (c) { return c.id === winner.id; });
+            if (!comment) return;
+
+            currentWinner = comment;
+            document.getElementById('winner-text').textContent = comment.username;
+            document.getElementById('winner-quote').textContent = '"' + comment.comment + '"';
+
+            document.getElementById('result-modal').classList.add('open');
+            Utils.playSound('win');
+            Utils.triggerConfetti();
+        }
+
+        function disqualify() {
+            if (!currentWinner) return;
+
+            filteredComments = filteredComments.filter(function (c) { return c.id !== currentWinner.id; });
+            loadWheel();
+            document.getElementById('result-modal').classList.remove('open');
+
+            setTimeout(function () { wheel.spin(); }, 500);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            wheel = new PickerWheel('wheel-canvas', {
+                onSpinStart: () => Utils.playSound('tick'),
+                onSpinEnd: showResult
+            });
+
+            document.getElementById('search-btn').addEventListener('click', simulateLoad);
+            document.getElementById('demo-btn').addEventListener('click', simulateLoad);
+            document.getElementById('load-wheel-btn').addEventListener('click', loadWheel);
+            document.getElementById('spin-btn').addEventListener('click', function () {
+                if (filteredComments.length > 0) wheel.spin();
+            });
+            document.getElementById('disqualify-btn').addEventListener('click', disqualify);
+        });
+    </script>
+</body>
+
+</html>

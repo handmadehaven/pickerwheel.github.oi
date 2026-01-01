@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Country Picker Settings</title>
+</head>
+
+<body>
+    <h1>Clear Country Picker Settings</h1>
+    <button onclick="clearSettings()">Clear localStorage Settings</button>
+    <p id="result"></p>
+
+    <script>
+        function clearSettings() {
+            localStorage.removeItem('country-picker-settings');
+            document.getElementById('result').textContent = 'Settings cleared! Reload the Country Picker page.';
+        }
+
+        // Show current settings
+        const current = localStorage.getItem('country-picker-settings');
+        if (current) {
+            console.log('Current settings:', JSON.parse(current));
+            document.getElementById('result').textContent = 'Current settings: ' + current;
+        } else {
+            document.getElementById('result').textContent = 'No settings found in localStorage.';
+        }
+    </script>
+</body>
+
+</html>

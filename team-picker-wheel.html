@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Picker Wheel - Random Team Generator</title>
+    <meta name="description"
+        content="Randomly split a list of names into teams or groups. Perfect for classroom activities, games, sports, and team building.">
+    <meta name="keywords" content="team picker wheel, random team generator, group maker, team splitter, random groups">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ipickerwheel.com/team-picker-wheel.html">
+    <meta property="og:title" content="Team Picker Wheel - Random Team Generator">
+    <meta property="og:description"
+        content="Randomly split a list of names into teams or groups. Perfect for classroom activities and games.">
+    <meta property="og:image" content="https://ipickerwheel.com/images/og-team.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ipickerwheel.com/team-picker-wheel.html">
+    <meta property="twitter:title" content="Team Picker Wheel - Random Team Generator">
+    <meta property="twitter:description" content="Randomly split a list of names into teams or groups.">
+    <meta property="twitter:image" content="https://ipickerwheel.com/images/og-team.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://ipickerwheel.com/team-picker-wheel.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific Styles for Team Picker */
+        .layout-3-col {
+            display: grid;
+            grid-template-columns: 1fr 300px 300px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-3-col {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .col-inputs {
+                order: 1;
+            }
+
+            .col-controller {
+                order: 2;
+            }
+
+            .col-result {
+                order: 3;
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout-3-col {
+                grid-template-columns: 1fr;
+            }
+
+            .col-result {
+                grid-column: span 1;
+            }
+        }
+
+        /* Card Specifics */
+        .tp-card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            /* Fixed height for consistency */
+        }
+
+        .tp-header {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tp-body {
+            padding: 15px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Input List */
+        .name-list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+        }
+
+        .gender-toggle {
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-right: 10px;
+            opacity: 0.3;
+        }
+
+        .gender-toggle.active {
+            opacity: 1;
+        }
+
+        /* Controller */
+        .ctrl-group {
+            margin-bottom: 20px;
+        }
+
+        .ctrl-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            /* Yellow */
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            color: #333;
+            transition: transform 0.1s;
+        }
+
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Result Cards */
+        .team-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .team-header {
+            padding: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .team-list {
+            padding: 10px;
+            list-style: none;
+        }
+
+        .team-list li {
+            padding: 4px 0;
+            border-bottom: 1px dashed #eee;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">👥</div>
+                <div class="logo-text">
+                    Team Picker Wheel
+                    <span>Randomize people into groups</span>
+                </div>
+            </a>
+            <div class="nav-icons">
+                <button class="nav-btn" id="header-dark-mode-toggle" title="Toggle Dark Mode">
+                    <span class="nav-icon">🌙</span>
+                    <span class="nav-label">Theme</span>
+                </button>
+                <button class="nav-btn" id="switch-wheel-btn" title="Switch Wheel">
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-label">Switch</span>
+                </button>
+                <button class="nav-btn" id="file-btn" title="File">
+                    <span class="nav-icon">📁</span>
+                    <span class="nav-label">File</span>
+                </button>
+                <button class="nav-btn" id="settings-nav-btn" title="Settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </button>
+                <button class="nav-btn" id="share-btn" title="Share">
+                    <span class="nav-icon">🔗</span>
+                    <span class="nav-label">Share</span>
+                </button>
+                <button class="nav-btn" id="tools-btn" title="Tools">
+                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-label">Tools</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 40px 0;">
+        <div class="layout-3-col">
+
+            <!-- 3. RESULT (Left on Desktop, per prompt logic it said Left, but usually results are central or huge. Let's follow prompt: Result Left) -->
+            <div class="tp-card col-result">
+                <div class="tp-header">3. RESULT</div>
+                <div class="tp-body" id="result-area" style="background:#ffffff;">
+                    <div style="text-align:center; color:#999; margin-top:50%;">
+                        Result will appear here...
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. CONTROLLER (Middle) -->
+            <div class="tp-card col-controller">
+                <div class="tp-header">2. CONTROLLER</div>
+                <div class="tp-body">
+
+                    <div class="ctrl-group">
+                        <span class="ctrl-label">Distribution Mode</span>
+                        <div>
+                            <label><input type="radio" name="dist-mode" value="random" checked> Random</label>
+                            <br>
+                            <label><input type="radio" name="dist-mode" value="gender"> Balance Gender</label>
+                        </div>
+                    </div>
+
+                    <div class="ctrl-group">
+                        <span class="ctrl-label">Group Settings</span>
+                        <div style="margin-bottom:10px;">
+                            <label>
+                                <input type="radio" name="group-type" value="count" checked>
+                                Number of Groups
+                            </label>
+                            <input type="number" id="group-count" value="2" min="1"
+                                style="width:60px; margin-left:10px;">
+                        </div>
+                        <div>
+                            <label>
+                                <input type="radio" name="group-type" value="max">
+                                Max People / Group
+                            </label>
+                            <input type="number" id="group-max" value="5" min="1" disabled
+                                style="width:60px; margin-left:10px;">
+                        </div>
+                    </div>
+
+                    <button id="start-btn" class="start-btn">START</button>
+
+                    <div style="margin-top:20px; text-align:center;">
+                        <button id="reset-result-btn"
+                            style="background:none; border:none; text-decoration:underline; cursor:pointer;">Clear
+                            Results</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 1. INPUTS (Right) -->
+            <div class="tp-card col-inputs">
+                <div class="tp-header">
+                    1. INPUTS
+                    <small id="count-label">0 items</small>
+                </div>
+                <div class="tp-body">
+                    <div style="display:flex; gap:5px; margin-bottom:15px;">
+                        <input type="text" id="name-input" class="main-input" placeholder="Enter name...">
+                        <button id="add-name-btn" class="add-btn">+</button>
+                    </div>
+
+                    <div id="names-list" style="max-height:450px; overflow-y:auto;">
+                        <!-- Names go here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="content-section">
+            <h2>What Is Team Picker Wheel?</h2>
+            <p>Team Picker Wheel is a random team generator developed by Picker Wheel team. It helps you to split a list
+                of names into teams or groups based on your criteria. Whether you need random grouping or
+                gender-balanced teams, this tool handles it instantly.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container" style="text-align:center;">
+            &copy; 2026 I Picker Wheel. All rights reserved. <a href="index.html">Back to Home</a>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/team-logic.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new TeamPicker();
+
+            // DOM Elements
+            const input = document.getElementById('name-input');
+            const addBtn = document.getElementById('add-name-btn');
+            const listEl = document.getElementById('names-list');
+            const countLabel = document.getElementById('count-label');
+            const startBtn = document.getElementById('start-btn');
+            const resultArea = document.getElementById('result-area');
+
+            // Settings
+            const radioCount = document.querySelector('input[value="count"]');
+            const radioMax = document.querySelector('input[value="max"]');
+            const inputCount = document.getElementById('group-count');
+            const inputMax = document.getElementById('group-max');
+
+            // Initial Data (Demo)
+            ['Alice', 'Bob', 'Charlie', 'David', 'Eva', 'Frank', 'Grace', 'Hannah', 'Ivan'].forEach(n => app.addName(n));
+            renderList();
+
+            // Interactions
+            addBtn.addEventListener('click', () => {
+                const val = input.value.trim();
+                if (val) {
+                    app.addName(val);
+                    input.value = '';
+                    renderList();
+                }
+            });
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addBtn.click();
+            });
+
+            listEl.addEventListener('click', (e) => {
+                // Delete
+                if (e.target.classList.contains('del-btn')) {
+                    const id = parseFloat(e.target.dataset.id);
+                    app.removeName(id);
+                    renderList();
+                }
+                // Gender Toggle (Simple cycle: None -> Male -> Female -> None)
+                if (e.target.classList.contains('gender-toggle')) {
+                    const id = parseFloat(e.target.dataset.id);
+                    const person = app.names.find(n => n.id === id);
+                    if (person) {
+                        if (person.gender === 'none') person.gender = 'male';
+                        else if (person.gender === 'male') person.gender = 'female';
+                        else person.gender = 'none';
+                        renderList();
+                    }
+                }
+            });
+
+            // Render
+            function renderList() {
+                listEl.innerHTML = '';
+                app.names.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'name-list-item';
+
+                    let genderIcon = '👤';
+                    let genderClass = '';
+                    if (p.gender === 'male') { genderIcon = '👨'; genderClass = 'active'; }
+                    if (p.gender === 'female') { genderIcon = '👩'; genderClass = 'active'; }
+
+                    div.innerHTML = `
+            <div style="display:flex; align-items:center;">
+              <span class="gender-toggle ${genderClass}" data-id="${p.id}">${genderIcon}</span>
+              <span>${p.name}</span>
+            </div>
+            <button class="del-btn delete-btn" data-id="${p.id}">&times;</button>
+          `;
+                    listEl.appendChild(div);
+                });
+                countLabel.textContent = `${app.names.length} items`;
+            }
+
+            // Radio Logic
+            radioCount.addEventListener('change', () => {
+                inputCount.disabled = false;
+                inputMax.disabled = true;
+            });
+            radioMax.addEventListener('change', () => {
+                inputCount.disabled = true;
+                inputMax.disabled = false;
+            });
+
+            // Start Logic
+            startBtn.addEventListener('click', () => {
+                const mode = radioCount.checked ? 'groups' : 'max';
+                const value = parseInt(radioCount.checked ? inputCount.value : inputMax.value);
+                const balance = document.querySelector('input[value="gender"]').checked;
+
+                const teams = app.generateTeams(mode, value, balance);
+
+                // Render Result
+                resultArea.innerHTML = '';
+                const colors = ['#4CAF50', '#FF9800', '#2196F3', '#E91E63', '#9C27B0', '#00BCD4'];
+
+                teams.forEach((team, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'team-card';
+                    const color = colors[i % colors.length];
+
+                    let listHtml = team.map(p => `<li>${p.name}</li>`).join('');
+
+                    card.innerHTML = `
+            <div class="team-header" style="background:${color}">Team ${i + 1} (${team.length})</div>
+            <ul class="team-list">${listHtml}</ul>
+          `;
+                    resultArea.appendChild(card);
+                });
+
+                Utils.playSound('win');
+                Utils.triggerConfetti();
+
+                // Scroll to result on mobile
+                if (window.innerWidth < 1024) {
+                    resultArea.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+
+            document.getElementById('reset-result-btn').addEventListener('click', () => {
+                resultArea.innerHTML = '<div style="text-align:center; color:#999; margin-top:50%;">Result will appear here...</div>';
+            });
+
+        });
+    </script>
+</body>
+
+</html>

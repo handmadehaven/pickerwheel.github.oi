@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Picker Wheel - Random Country Generator</title>
+    <meta name="description"
+        content="Spin the Country Picker Wheel to pick a random country. Perfect for geography games, travel inspiration, and learning about the world.">
+    <meta name="keywords"
+        content="country picker wheel, random country generator, geography wheel, random nation, travel picker, random country picker">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ipickerwheel.com/country-picker-wheel.html">
+    <meta property="og:title" content="Country Picker Wheel - Random Country Generator">
+    <meta property="og:description" content="Spin the Country Picker Wheel to pick a random country.">
+    <meta property="og:image" content="https://ipickerwheel.com/images/og-country.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ipickerwheel.com/country-picker-wheel.html">
+    <meta property="twitter:title" content="Country Picker Wheel - Random Country Generator">
+    <meta property="twitter:description" content="Spin the Country Picker Wheel to pick a random country.">
+    <meta property="twitter:image" content="https://ipickerwheel.com/images/og-country.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://ipickerwheel.com/country-picker-wheel.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/advanced-settings.css">
+    <link rel="stylesheet" href="css/button-animations.css">
+    <style>
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .region-btn {
+            padding: 12px 8px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .region-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .region-btn.active {
+            border-color: var(--primary-dark);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: #fff;
+        }
+
+        .region-icon {
+            font-size: 1.5rem;
+        }
+
+        .country-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e5eef0;
+            border-radius: 10px;
+            background: #ffffff;
+        }
+
+        .country-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-bottom: 1px solid #e5eef0;
+            background: #fff;
+            transition: background 0.2s;
+        }
+
+        .country-item:hover {
+            background: #f8faf7;
+        }
+
+        .country-item:last-child {
+            border-bottom: none;
+        }
+
+        .country-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .country-flag {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .country-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .winner-flag {
+            font-size: 6rem;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .display-options {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+
+        .display-options strong {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .toolbar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .select-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .select-btn {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .select-btn:hover {
+            background: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🌍</div>
+                <div class="logo-text">
+                    Country Picker Wheel
+                    <span>Random Country Generator</span>
+                </div>
+            </a>
+            <div class="nav-icons">
+                <button class="nav-btn" id="header-dark-mode-toggle" title="Toggle Dark Mode">
+                    <span class="nav-icon">🌙</span>
+                    <span class="nav-label">Theme</span>
+                </button>
+                <button class="nav-btn" id="switch-wheel-btn" title="Switch Wheel">
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-label">Switch</span>
+                </button>
+                <button class="nav-btn" id="file-btn" title="File">
+                    <span class="nav-icon">📁</span>
+                    <span class="nav-label">File</span>
+                </button>
+                <button class="nav-btn" id="settings-nav-btn" title="Settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </button>
+                <button class="nav-btn" id="share-btn" title="Share">
+                    <span class="nav-icon">🔗</span>
+                    <span class="nav-label">Share</span>
+                </button>
+                <button class="nav-btn" id="tools-btn" title="Tools">
+                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-label">Tools</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container hero">
+        <div class="hero-grid">
+            <!-- Wheel -->
+            <div class="wheel-section">
+                <div class="wheel-container">
+                    <div id="spin-count-badge" class="spin-count-badge" style="display:none;">
+                        <span class="count-icon">🎯</span>
+                        <span id="total-spins">0</span>
+                    </div>
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel-canvas"></canvas>
+                    <button id="manual-stop-btn" class="manual-stop-btn">STOP</button>
+                    <div class="spin-btn-container">
+                        <button id="spin-btn" class="spin-btn pulse">SPIN</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="inputs-section">
+                <div class="inputs-card">
+                    <div class="inputs-header">
+                        <h3>🌐 Select Countries</h3>
+                        <span id="country-count">0 of 0 selected</span>
+                    </div>
+
+                    <div class="region-grid">
+                        <button class="region-btn active" data-region="all">
+                            <span class="region-icon">🌐</span>
+                            <span>All</span>
+                        </button>
+                        <button class="region-btn" data-region="Europe">
+                            <span class="region-icon">🇪🇺</span>
+                            <span>Europe</span>
+                        </button>
+                        <button class="region-btn" data-region="Asia">
+                            <span class="region-icon">🌏</span>
+                            <span>Asia</span>
+                        </button>
+                        <button class="region-btn" data-region="Africa">
+                            <span class="region-icon">🌍</span>
+                            <span>Africa</span>
+                        </button>
+                        <button class="region-btn" data-region="North America">
+                            <span class="region-icon">🌎</span>
+                            <span>N. America</span>
+                        </button>
+                        <button class="region-btn" data-region="South America">
+                            <span class="region-icon">🌎</span>
+                            <span>S. America</span>
+                        </button>
+                        <button class="region-btn" data-region="Oceania">
+                            <span class="region-icon">🏝️</span>
+                            <span>Oceania</span>
+                        </button>
+                    </div>
+
+                    <div class="toolbar-row">
+                        <div class="select-btns">
+                            <button class="select-btn" id="select-all-btn">Select All</button>
+                            <button class="select-btn" id="deselect-all-btn">Deselect All</button>
+                        </div>
+                    </div>
+
+                    <div id="country-list" class="country-list"></div>
+
+                    <div class="display-options">
+                        <strong>Display Mode:</strong>
+                        <div class="radio-group">
+                            <label><input type="radio" name="display" value="both" checked> 🏳️ Flag & Name</label>
+                            <label><input type="radio" name="display" value="flag"> 🏳️ Flag Only</label>
+                            <label><input type="radio" name="display" value="name"> 📝 Name Only</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="result-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h2>🎉 Selected Country</h2>
+                <div id="winner-flag" class="winner-flag"></div>
+                <div id="winner-text" class="winner-text"></div>
+                <div class="modal-actions">
+                    <button class="btn-primary" id="modal-close">Close</button>
+                    <button class="btn-secondary" id="modal-hide">Hide & Spin Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED SETTINGS PANEL -->
+        <div class="settings-section">
+            <button class="settings-toggle" id="advanced-settings-toggle">
+                <span>⚙️ Advanced Tool Settings</span>
+                <span id="advanced-toggle-arrow" class="toggle-arrow">▲</span>
+            </button>
+            <div class="settings-panel open" id="advanced-settings-panel">
+
+                <!-- General Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="general">
+                        <h4>⚙️ General Settings</h4>
+                        <span class="category-arrow">▲</span>
+                    </div>
+                    <div class="category-content open">
+                        <div class="setting-row">
+                            <div class="setting-label">🌙 Dark Mode</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dark-mode-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spin Behavior Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="spin-behavior">
+                        <h4>🎯 Spin Behavior</h4>
+                        <span class="category-arrow">▲</span>
+                    </div>
+                    <div class="category-content open">
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Spinning Speed Level</div>
+                                <div class="setting-description">Lvl1 (Slow) to Lvl10 (Fast)</div>
+                            </div>
+                            <div class="range-container" style="width:200px;">
+                                <input type="range" id="speed-level" min="1" max="10" value="5">
+                                <span class="range-value" id="speed-level-value">5</span>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Spinning Duration</div>
+                                <div class="setting-description">1s to 30s animation</div>
+                            </div>
+                            <div class="range-container" style="width:200px;">
+                                <input type="range" id="adv-spin-duration" min="1" max="30" value="4">
+                                <span class="range-value" id="adv-duration-value">4s</span>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Manual Stop Button</div>
+                                <div class="setting-description">Click button to stop manually</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="manual-stop-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Mystery Spin</div>
+                                <div class="setting-description">Replace names with "?" during spin</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="mystery-spin-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Spin Count</div>
+                                <div class="setting-description">Track total number of spins</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="spin-count-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Random Initial Angle</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="random-angle-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div>
+                                <div class="setting-label">Initial Spinning</div>
+                                <div class="setting-description">Wheel rotates slowly on load</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="initial-spin-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confetti & Sound Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="confetti-sound">
+                        <h4>🎊 Confetti & Sound</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row">
+                            <div class="setting-label">Confetti on Win</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="adv-confetti-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-label">Sound Effects</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="adv-sound-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:10px;">
+                            <div class="setting-label">Custom Sounds (Premium User)</div>
+                            <div style="display:grid; gap:8px;">
+                                <div class="sub-setting">
+                                    <label style="font-size:0.75rem;">Start Sound URL</label>
+                                    <input type="text" id="sound-start-url" placeholder="URL to start audio..."
+                                        class="main-input" style="padding:4px; font-size:0.75rem;">
+                                </div>
+                                <div class="sub-setting">
+                                    <label style="font-size:0.75rem;">Spinning Sound URL</label>
+                                    <input type="text" id="sound-spin-url" placeholder="URL to tick audio..."
+                                        class="main-input" style="padding:4px; font-size:0.75rem;">
+                                </div>
+                                <div class="sub-setting">
+                                    <label style="font-size:0.75rem;">End (Win) Sound URL</label>
+                                    <input type="text" id="sound-win-url" placeholder="URL to win audio..."
+                                        class="main-input" style="padding:4px; font-size:0.75rem;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Colors Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="tool-colors">
+                        <h4>🎨 Tool Colors & Themes</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Theme Presets</div>
+                            <div class="theme-grid"
+                                style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;">
+                                <button class="theme-btn" data-theme="vibrant"
+                                    style="background: linear-gradient(90deg, #f43f5e, #fbbf24, #10b981);">Vibrant</button>
+                                <button class="theme-btn" data-theme="ocean"
+                                    style="background: linear-gradient(90deg, #0ea5e9, #3b82f6, #6366f1);">Ocean
+                                    Blue</button>
+                                <button class="theme-btn" data-theme="sunset"
+                                    style="background: linear-gradient(90deg, #f97316, #fb923c, #fcd34d);">Sunset</button>
+                                <button class="theme-btn" data-theme="nature"
+                                    style="background: linear-gradient(90deg, #16a34a, #22c55e, #86efac);">Nature</button>
+                                <button class="theme-btn" data-theme="pastel"
+                                    style="background: linear-gradient(90deg, #fda4af, #fde68a, #a7f3d0);">Pastel
+                                    Soft</button>
+                                <button class="theme-btn" data-theme="monochrome"
+                                    style="background: linear-gradient(90deg, #333, #777, #ccc);">Monochrome</button>
+                            </div>
+                        </div>
+                        <div class="setting-row" style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                            <div class="setting-label">Custom Palette (Premium)</div>
+                            <div id="color-palette" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Appearance Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="appearance">
+                        <h4>📐 Basic Appearance</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row">
+                            <div class="setting-item" style="width:100%;">
+                                <label class="setting-label">Center Image</label>
+                                <div style="display:flex; gap:5px; margin-top:8px;">
+                                    <input type="text" id="center-image-url" placeholder="Image URL..."
+                                        class="main-input" style="padding:8px; font-size:0.8rem; flex:1;">
+                                    <button id="center-image-file-btn" class="nav-btn" title="Upload"
+                                        style="padding:8px 12px;">📁</button>
+                                    <button id="center-image-clear-btn" class="nav-btn" title="Clear"
+                                        style="padding:8px 12px; color:red;">✕</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-item" style="width:100%;">
+                                <label class="setting-label">Font Style</label>
+                                <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+                                    <select id="font-family" class="main-input"
+                                        style="padding:8px; font-size:0.8rem; flex:1;">
+                                        <option value="Inter, sans-serif">Inter</option>
+                                        <option value="Arial, sans-serif">Arial</option>
+                                        <option value="'Courier New', monospace">Courier</option>
+                                        <option value="'Times New Roman', serif">Serif</option>
+                                        <option value="Impact, sans-serif">Impact</option>
+                                        <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                                    </select>
+                                    <input type="color" id="font-color" value="#333333"
+                                        style="height:38px; width:40px; cursor:pointer; border:none; background:none; padding:0;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div style="width:100%;">
+                                <div class="setting-label">Font Size</div>
+                                <div class="range-container" style="margin-top:8px;">
+                                    <span class="range-label">S</span>
+                                    <input type="range" id="font-size" min="10" max="40" value="16" style="flex:1;">
+                                    <span class="range-label">L</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div style="width:100%;">
+                                <div class="setting-label">Border Thickness</div>
+                                <div class="range-container" style="margin-top:8px;">
+                                    <span class="range-label">0</span>
+                                    <input type="range" id="border-width" min="0" max="10" value="1" style="flex:1;">
+                                    <span class="range-label">10</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <div style="width:100%;">
+                                <div class="setting-label">Pointer Colors</div>
+                                <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                                    <input type="color" id="pointer-color" value="#ffffff"
+                                        style="height:35px; width:35px; border:none; background:none; cursor:pointer;">
+                                    <span class="range-label" style="font-size:0.75rem;">Outer</span>
+                                    <input type="color" id="pointer-center-color" value="#fbbf24"
+                                        style="height:35px; width:35px; border:none; background:none; cursor:pointer;">
+                                    <span class="range-label" style="font-size:0.75rem;">Inner</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Background Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="background">
+                        <h4>🖼️ Background Customization</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="background-tabs">
+                            <button class="bg-tab active" data-tab="color">Color</button>
+                            <button class="bg-tab" data-tab="image">Image (PM)</button>
+                            <button class="bg-tab" data-tab="gradient">Gradient (PM)</button>
+                        </div>
+
+                        <div class="bg-panel active" id="bg-color-panel">
+                            <div class="setting-row">
+                                <div class="setting-label">Section Background Color</div>
+                                <input type="color" id="bg-color" value="#ffffff"
+                                    style="height:40px; width:80px; cursor:pointer; border:none; background:none;">
+                            </div>
+                        </div>
+
+                        <div class="bg-panel" id="bg-image-panel">
+                            <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                                <div class="setting-label" style="margin-bottom:8px;">Background Image URL (Premium)
+                                </div>
+                                <div style="display:flex; gap:5px;">
+                                    <input type="text" id="bg-image-url" placeholder="Enter image URL..."
+                                        class="main-input" style="padding:8px; flex:1;">
+                                    <button id="bg-image-upload" class="nav-btn" title="Upload">📁</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-panel" id="bg-gradient-panel">
+                            <div class="setting-row">
+                                <div class="setting-label">Start Color</div>
+                                <input type="color" id="gradient-start" value="#667eea"
+                                    style="height:40px; width:40px; cursor:pointer; border:none; background:none;">
+                                <div class="setting-label">End Color</div>
+                                <input type="color" id="gradient-end" value="#764ba2"
+                                    style="height:40px; width:40px; cursor:pointer; border:none; background:none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spin Button Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="spin-button">
+                        <h4>🔘 Custom Spin Button (Premium)</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Button Color & Style</div>
+                            <div class="button-color-grid">
+                                <div class="color-option selected" data-color="gradient(#fbbf24, #f59e0b)"
+                                    style="background:linear-gradient(135deg, #fbbf24, #f59e0b);"></div>
+                                <div class="color-option" data-color="gradient(#6366f1, #4f46e5)"
+                                    style="background:linear-gradient(135deg, #6366f1, #4f46e5);"></div>
+                                <div class="color-option" data-color="gradient(#10b981, #059669)"
+                                    style="background:linear-gradient(135deg, #10b981, #059669);"></div>
+                                <div class="color-option" data-color="gradient(#ef4444, #dc2626)"
+                                    style="background:linear-gradient(135deg, #ef4444, #dc2626);"></div>
+                                <div class="color-option" data-color="gradient(#ec4899, #db2777)"
+                                    style="background:linear-gradient(135deg, #ec4899, #db2777);"></div>
+                                <div class="color-option" data-color="gradient(#8b5cf6, #7c3aed)"
+                                    style="background:linear-gradient(135deg, #8b5cf6, #7c3aed);"></div>
+                                <div class="color-option" data-color="#000000" style="background:#000000;"></div>
+                                <div class="color-option" data-color="#ffffff"
+                                    style="background:#ffffff; border:1px solid #ddd;"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch; margin-top:10px;">
+                            <div class="setting-label" style="margin-bottom:8px;">Spin Button Animation</div>
+                            <div class="animation-grid">
+                                <div class="animation-option selected" data-animation="pulse">Pulse</div>
+                                <div class="animation-option" data-animation="bounce">Bounce</div>
+                                <div class="animation-option" data-animation="spin">Spin</div>
+                                <div class="animation-option" data-animation="glow">Glow</div>
+                                <div class="animation-option" data-animation="shake">Shake</div>
+                                <div class="animation-option" data-animation="none">None</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner/Logo Category -->
+                <div class="settings-category">
+                    <div class="category-header" data-category="banner">
+                        <h4>🏷️ Custom Banner | Logo (Premium)</h4>
+                        <span class="category-arrow">▼</span>
+                    </div>
+                    <div class="category-content">
+                        <div class="setting-row">
+                            <div class="setting-label">Show Banner/Header</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="banner-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Custom Logo URL</div>
+                            <input type="text" id="logo-url" placeholder="URL to your logo..." class="main-input"
+                                style="padding:8px;">
+                        </div>
+
+                        <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                            <div class="setting-label" style="margin-bottom:8px;">Custom Banner Text</div>
+                            <input type="text" id="banner-text" placeholder="Enter custom title..." class="main-input"
+                                style="padding:8px;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SEO Content -->
+        <div class="content-section">
+            <h2>Other Picker Tools</h2>
+            <div class="tools-grid" style="margin-top:20px;">
+                <a href="index.html" class="tool-card">
+                    <div class="tool-icon">🎯</div>
+                    <span>I Picker Wheel</span>
+                </a>
+                <a href="team-picker-wheel.html" class="tool-card">
+                    <div class="tool-icon">👥</div>
+                    <span>Team Picker</span>
+                </a>
+                <a href="yes-no-picker-wheel.html" class="tool-card">
+                    <div class="tool-icon">✅</div>
+                    <span>Yes/No</span>
+                </a>
+                <a href="number-picker-wheel.html" class="tool-card">
+                    <div class="tool-icon">🔢</div>
+                    <span>Number</span>
+                </a>
+                <a href="letter-picker-wheel.html" class="tool-card">
+                    <div class="tool-icon">🔤</div>
+                    <span>Letter</span>
+                </a>
+                <a href="state-picker-wheel.html" class="tool-card">
+                    <div class="tool-icon">🗺️</div>
+                    <span>State</span>
+                </a>
+                <a href="color-picker-wheel.html" class="tool-card">
+                    <div class="tool-icon">🎨</div>
+                    <span>Color</span>
+                </a>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <h1>Country Picker Wheel - Pick a Random Country</h1>
+                <p>Country Picker Wheel is a random country generator that helps you pick a random country from around
+                    the world. Perfect for geography games, travel planning, educational activities, and flag quizzes!
+                </p>
+
+                <h2>How to Use</h2>
+                <p>1. Select a region or keep "All" to include all countries</p>
+                <p>2. Check/uncheck individual countries as needed</p>
+                <p>3. Choose display mode (Flag & Name, Flag Only, or Name Only)</p>
+                <p>4. Click SPIN to pick a random country!</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col footer-brand">
+                    <div class="footer-logo">
+                        <span class="footer-logo-icon">🌍</span>
+                        <span>Country Picker Wheel</span>
+                    </div>
+                    <p class="footer-copyright">&copy; 2026 I Picker Wheel. All rights reserved.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#">Premium Plan</a></li>
+                        <li><a href="#">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Feedback</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/wheel-engine.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/advanced-settings.js"></script>
+    <script>
+        // ============ COUNTRY DATA - ALL COUNTRIES WITH FLAGS ============
+        const ALL_COUNTRIES = [
+            // Europe (44 countries)
+            { name: "Albania", flag: "🇦🇱", region: "Europe" },
+            { name: "Andorra", flag: "🇦🇩", region: "Europe" },
+            { name: "Austria", flag: "🇦🇹", region: "Europe" },
+            { name: "Belarus", flag: "🇧🇾", region: "Europe" },
+            { name: "Belgium", flag: "🇧🇪", region: "Europe" },
+            { name: "Bosnia and Herzegovina", flag: "🇧🇦", region: "Europe" },
+            { name: "Bulgaria", flag: "🇧🇬", region: "Europe" },
+            { name: "Croatia", flag: "🇭🇷", region: "Europe" },
+            { name: "Cyprus", flag: "🇨🇾", region: "Europe" },
+            { name: "Czech Republic", flag: "🇨🇿", region: "Europe" },
+            { name: "Denmark", flag: "🇩🇰", region: "Europe" },
+            { name: "Estonia", flag: "🇪🇪", region: "Europe" },
+            { name: "Finland", flag: "🇫🇮", region: "Europe" },
+            { name: "France", flag: "🇫🇷", region: "Europe" },
+            { name: "Germany", flag: "🇩🇪", region: "Europe" },
+            { name: "Greece", flag: "🇬🇷", region: "Europe" },
+            { name: "Hungary", flag: "🇭🇺", region: "Europe" },
+            { name: "Iceland", flag: "🇮🇸", region: "Europe" },
+            { name: "Ireland", flag: "🇮🇪", region: "Europe" },
+            { name: "Italy", flag: "🇮🇹", region: "Europe" },
+            { name: "Kosovo", flag: "🇽🇰", region: "Europe" },
+            { name: "Latvia", flag: "🇱🇻", region: "Europe" },
+            { name: "Liechtenstein", flag: "🇱🇮", region: "Europe" },
+            { name: "Lithuania", flag: "🇱🇹", region: "Europe" },
+            { name: "Luxembourg", flag: "🇱🇺", region: "Europe" },
+            { name: "Malta", flag: "🇲🇹", region: "Europe" },
+            { name: "Moldova", flag: "🇲🇩", region: "Europe" },
+            { name: "Monaco", flag: "🇲🇨", region: "Europe" },
+            { name: "Montenegro", flag: "🇲🇪", region: "Europe" },
+            { name: "Netherlands", flag: "🇳🇱", region: "Europe" },
+            { name: "North Macedonia", flag: "🇲🇰", region: "Europe" },
+            { name: "Norway", flag: "🇳🇴", region: "Europe" },
+            { name: "Poland", flag: "🇵🇱", region: "Europe" },
+            { name: "Portugal", flag: "🇵🇹", region: "Europe" },
+            { name: "Romania", flag: "🇷🇴", region: "Europe" },
+            { name: "Russia", flag: "🇷🇺", region: "Europe" },
+            { name: "San Marino", flag: "🇸🇲", region: "Europe" },
+            { name: "Serbia", flag: "🇷🇸", region: "Europe" },
+            { name: "Slovakia", flag: "🇸🇰", region: "Europe" },
+            { name: "Slovenia", flag: "🇸🇮", region: "Europe" },
+            { name: "Spain", flag: "🇪🇸", region: "Europe" },
+            { name: "Sweden", flag: "🇸🇪", region: "Europe" },
+            { name: "Switzerland", flag: "🇨🇭", region: "Europe" },
+            { name: "Ukraine", flag: "🇺🇦", region: "Europe" },
+            { name: "United Kingdom", flag: "🇬🇧", region: "Europe" },
+            { name: "Vatican City", flag: "🇻🇦", region: "Europe" },
+
+            // Asia (49 countries)
+            { name: "Afghanistan", flag: "🇦🇫", region: "Asia" },
+            { name: "Armenia", flag: "🇦🇲", region: "Asia" },
+            { name: "Azerbaijan", flag: "🇦🇿", region: "Asia" },
+            { name: "Bahrain", flag: "🇧🇭", region: "Asia" },
+            { name: "Bangladesh", flag: "🇧🇩", region: "Asia" },
+            { name: "Bhutan", flag: "🇧🇹", region: "Asia" },
+            { name: "Brunei", flag: "🇧🇳", region: "Asia" },
+            { name: "Cambodia", flag: "🇰🇭", region: "Asia" },
+            { name: "China", flag: "🇨🇳", region: "Asia" },
+            { name: "Georgia", flag: "🇬🇪", region: "Asia" },
+            { name: "India", flag: "🇮🇳", region: "Asia" },
+            { name: "Indonesia", flag: "🇮🇩", region: "Asia" },
+            { name: "Iran", flag: "🇮🇷", region: "Asia" },
+            { name: "Iraq", flag: "🇮🇶", region: "Asia" },
+            { name: "Israel", flag: "🇮🇱", region: "Asia" },
+            { name: "Japan", flag: "🇯🇵", region: "Asia" },
+            { name: "Jordan", flag: "🇯🇴", region: "Asia" },
+            { name: "Kazakhstan", flag: "🇰🇿", region: "Asia" },
+            { name: "Kuwait", flag: "🇰🇼", region: "Asia" },
+            { name: "Kyrgyzstan", flag: "🇰🇬", region: "Asia" },
+            { name: "Laos", flag: "🇱🇦", region: "Asia" },
+            { name: "Lebanon", flag: "🇱🇧", region: "Asia" },
+            { name: "Malaysia", flag: "🇲🇾", region: "Asia" },
+            { name: "Maldives", flag: "🇲🇻", region: "Asia" },
+            { name: "Mongolia", flag: "🇲🇳", region: "Asia" },
+            { name: "Myanmar", flag: "🇲🇲", region: "Asia" },
+            { name: "Nepal", flag: "🇳🇵", region: "Asia" },
+            { name: "North Korea", flag: "🇰🇵", region: "Asia" },
+            { name: "Oman", flag: "🇴🇲", region: "Asia" },
+            { name: "Pakistan", flag: "🇵🇰", region: "Asia" },
+            { name: "Palestine", flag: "🇵🇸", region: "Asia" },
+            { name: "Philippines", flag: "🇵🇭", region: "Asia" },
+            { name: "Qatar", flag: "🇶🇦", region: "Asia" },
+            { name: "Saudi Arabia", flag: "🇸🇦", region: "Asia" },
+            { name: "Singapore", flag: "🇸🇬", region: "Asia" },
+            { name: "South Korea", flag: "🇰🇷", region: "Asia" },
+            { name: "Sri Lanka", flag: "🇱🇰", region: "Asia" },
+            { name: "Syria", flag: "🇸🇾", region: "Asia" },
+            { name: "Taiwan", flag: "🇹🇼", region: "Asia" },
+            { name: "Tajikistan", flag: "🇹🇯", region: "Asia" },
+            { name: "Thailand", flag: "🇹🇭", region: "Asia" },
+            { name: "Timor-Leste", flag: "🇹🇱", region: "Asia" },
+            { name: "Turkey", flag: "🇹🇷", region: "Asia" },
+            { name: "Turkmenistan", flag: "🇹🇲", region: "Asia" },
+            { name: "United Arab Emirates", flag: "🇦🇪", region: "Asia" },
+            { name: "Uzbekistan", flag: "🇺🇿", region: "Asia" },
+            { name: "Vietnam", flag: "🇻🇳", region: "Asia" },
+            { name: "Yemen", flag: "🇾🇪", region: "Asia" },
+
+            // Africa (54 countries)
+            { name: "Algeria", flag: "🇩🇿", region: "Africa" },
+            { name: "Angola", flag: "🇦🇴", region: "Africa" },
+            { name: "Benin", flag: "🇧🇯", region: "Africa" },
+            { name: "Botswana", flag: "🇧🇼", region: "Africa" },
+            { name: "Burkina Faso", flag: "🇧🇫", region: "Africa" },
+            { name: "Burundi", flag: "🇧🇮", region: "Africa" },
+            { name: "Cabo Verde", flag: "🇨🇻", region: "Africa" },
+            { name: "Cameroon", flag: "🇨🇲", region: "Africa" },
+            { name: "Central African Republic", flag: "🇨🇫", region: "Africa" },
+            { name: "Chad", flag: "🇹🇩", region: "Africa" },
+            { name: "Comoros", flag: "🇰🇲", region: "Africa" },
+            { name: "Congo (Brazzaville)", flag: "🇨🇬", region: "Africa" },
+            { name: "Congo (Kinshasa)", flag: "🇨🇩", region: "Africa" },
+            { name: "Côte d'Ivoire", flag: "🇨🇮", region: "Africa" },
+            { name: "Djibouti", flag: "🇩🇯", region: "Africa" },
+            { name: "Egypt", flag: "🇪🇬", region: "Africa" },
+            { name: "Equatorial Guinea", flag: "🇬🇶", region: "Africa" },
+            { name: "Eritrea", flag: "🇪🇷", region: "Africa" },
+            { name: "Eswatini", flag: "🇸🇿", region: "Africa" },
+            { name: "Ethiopia", flag: "🇪🇹", region: "Africa" },
+            { name: "Gabon", flag: "🇬🇦", region: "Africa" },
+            { name: "Gambia", flag: "🇬🇲", region: "Africa" },
+            { name: "Ghana", flag: "🇬🇭", region: "Africa" },
+            { name: "Guinea", flag: "🇬🇳", region: "Africa" },
+            { name: "Guinea-Bissau", flag: "🇬🇼", region: "Africa" },
+            { name: "Kenya", flag: "🇰🇪", region: "Africa" },
+            { name: "Lesotho", flag: "🇱🇸", region: "Africa" },
+            { name: "Liberia", flag: "🇱🇷", region: "Africa" },
+            { name: "Libya", flag: "🇱🇾", region: "Africa" },
+            { name: "Madagascar", flag: "🇲🇬", region: "Africa" },
+            { name: "Malawi", flag: "🇲🇼", region: "Africa" },
+            { name: "Mali", flag: "🇲🇱", region: "Africa" },
+            { name: "Mauritania", flag: "🇲🇷", region: "Africa" },
+            { name: "Mauritius", flag: "🇲🇺", region: "Africa" },
+            { name: "Morocco", flag: "🇲🇦", region: "Africa" },
+            { name: "Mozambique", flag: "🇲🇿", region: "Africa" },
+            { name: "Namibia", flag: "🇳🇦", region: "Africa" },
+            { name: "Niger", flag: "🇳🇪", region: "Africa" },
+            { name: "Nigeria", flag: "🇳🇬", region: "Africa" },
+            { name: "Rwanda", flag: "🇷🇼", region: "Africa" },
+            { name: "São Tomé and Príncipe", flag: "🇸🇹", region: "Africa" },
+            { name: "Senegal", flag: "🇸🇳", region: "Africa" },
+            { name: "Seychelles", flag: "🇸🇨", region: "Africa" },
+            { name: "Sierra Leone", flag: "🇸🇱", region: "Africa" },
+            { name: "Somalia", flag: "🇸🇴", region: "Africa" },
+            { name: "South Africa", flag: "🇿🇦", region: "Africa" },
+            { name: "South Sudan", flag: "🇸🇸", region: "Africa" },
+            { name: "Sudan", flag: "🇸🇩", region: "Africa" },
+            { name: "Tanzania", flag: "🇹🇿", region: "Africa" },
+            { name: "Togo", flag: "🇹🇬", region: "Africa" },
+            { name: "Tunisia", flag: "🇹🇳", region: "Africa" },
+            { name: "Uganda", flag: "🇺🇬", region: "Africa" },
+            { name: "Zambia", flag: "🇿🇲", region: "Africa" },
+            { name: "Zimbabwe", flag: "🇿🇼", region: "Africa" },
+
+            // North America (23 countries)
+            { name: "Antigua and Barbuda", flag: "🇦🇬", region: "North America" },
+            { name: "Bahamas", flag: "🇧🇸", region: "North America" },
+            { name: "Barbados", flag: "🇧🇧", region: "North America" },
+            { name: "Belize", flag: "🇧🇿", region: "North America" },
+            { name: "Canada", flag: "🇨🇦", region: "North America" },
+            { name: "Costa Rica", flag: "🇨🇷", region: "North America" },
+            { name: "Cuba", flag: "🇨🇺", region: "North America" },
+            { name: "Dominica", flag: "🇩🇲", region: "North America" },
+            { name: "Dominican Republic", flag: "🇩🇴", region: "North America" },
+            { name: "El Salvador", flag: "🇸🇻", region: "North America" },
+            { name: "Grenada", flag: "🇬🇩", region: "North America" },
+            { name: "Guatemala", flag: "🇬🇹", region: "North America" },
+            { name: "Haiti", flag: "🇭🇹", region: "North America" },
+            { name: "Honduras", flag: "🇭🇳", region: "North America" },
+            { name: "Jamaica", flag: "🇯🇲", region: "North America" },
+            { name: "Mexico", flag: "🇲🇽", region: "North America" },
+            { name: "Nicaragua", flag: "🇳🇮", region: "North America" },
+            { name: "Panama", flag: "🇵🇦", region: "North America" },
+            { name: "Saint Kitts and Nevis", flag: "🇰🇳", region: "North America" },
+            { name: "Saint Lucia", flag: "🇱🇨", region: "North America" },
+            { name: "Saint Vincent and the Grenadines", flag: "🇻🇨", region: "North America" },
+            { name: "Trinidad and Tobago", flag: "🇹🇹", region: "North America" },
+            { name: "United States", flag: "🇺🇸", region: "North America" },
+
+            // South America (12 countries)
+            { name: "Argentina", flag: "🇦🇷", region: "South America" },
+            { name: "Bolivia", flag: "🇧🇴", region: "South America" },
+            { name: "Brazil", flag: "🇧🇷", region: "South America" },
+            { name: "Chile", flag: "🇨🇱", region: "South America" },
+            { name: "Colombia", flag: "🇨🇴", region: "South America" },
+            { name: "Ecuador", flag: "🇪🇨", region: "South America" },
+            { name: "Guyana", flag: "🇬🇾", region: "South America" },
+            { name: "Paraguay", flag: "🇵🇾", region: "South America" },
+            { name: "Peru", flag: "🇵🇪", region: "South America" },
+            { name: "Suriname", flag: "🇸🇷", region: "South America" },
+            { name: "Uruguay", flag: "🇺🇾", region: "South America" },
+            { name: "Venezuela", flag: "🇻🇪", region: "South America" },
+
+            // Oceania (14 countries)
+            { name: "Australia", flag: "🇦🇺", region: "Oceania" },
+            { name: "Fiji", flag: "🇫🇯", region: "Oceania" },
+            { name: "Kiribati", flag: "🇰🇮", region: "Oceania" },
+            { name: "Marshall Islands", flag: "🇲🇭", region: "Oceania" },
+            { name: "Micronesia", flag: "🇫🇲", region: "Oceania" },
+            { name: "Nauru", flag: "🇳🇷", region: "Oceania" },
+            { name: "New Zealand", flag: "🇳🇿", region: "Oceania" },
+            { name: "Palau", flag: "🇵🇼", region: "Oceania" },
+            { name: "Papua New Guinea", flag: "🇵🇬", region: "Oceania" },
+            { name: "Samoa", flag: "🇼🇸", region: "Oceania" },
+            { name: "Solomon Islands", flag: "🇸🇧", region: "Oceania" },
+            { name: "Tonga", flag: "🇹🇴", region: "Oceania" },
+            { name: "Tuvalu", flag: "🇹🇻", region: "Oceania" },
+            { name: "Vanuatu", flag: "🇻🇺", region: "Oceania" }
+        ];
+
+        // ============ APP STATE ============
+        let countries = ALL_COUNTRIES.map(c => ({ ...c, enabled: true }));
+        let currentRegion = 'all';
+        let displayMode = 'both';
+        let currentWinner = null;
+        let wheel; // Define wheel in broader scope
+
+        // ============ RENDER FUNCTIONS ============
+        function getFilteredCountries() {
+            if (currentRegion === 'all') return countries;
+            return countries.filter(c => c.region === currentRegion);
+        }
+
+        function getEnabledCountries() {
+            return getFilteredCountries().filter(c => c.enabled);
+        }
+
+        function renderCountryList() {
+            const countryListEl = document.getElementById('country-list');
+            const countryCountEl = document.getElementById('country-count');
+
+            if (!countryListEl || !countryCountEl) return;
+
+            const filtered = getFilteredCountries();
+
+            // Optimization: Create a name-to-index map if needed, 
+            // but since 'countries' is the same order as 'ALL_COUNTRIES', 
+            // we can just use the fact that 'countries' is our source of truth.
+
+            let html = '';
+            filtered.forEach((country) => {
+                // Find index in the main 'countries' array
+                // Since 'countries' is small (~200), findIndex is okay, but innerHTML is the real speedup.
+                const originalIndex = countries.findIndex(c => c.name === country.name);
+                html += `
+                    <div class="country-item">
+                        <input type="checkbox" class="country-checkbox" data-index="${originalIndex}" ${country.enabled ? 'checked' : ''}>
+                        <span class="country-flag">${country.flag}</span>
+                        <span class="country-name">${country.name}</span>
+                    </div>
+                `;
+            });
+
+            countryListEl.innerHTML = html;
+            updateCountryCount();
+            if (wheel) updateWheel();
+        }
+
+        function updateCountryCount() {
+            const filtered = getFilteredCountries();
+            const enabled = filtered.filter(c => c.enabled).length;
+            const countryCountEl = document.getElementById('country-count');
+            if (countryCountEl) countryCountEl.textContent = `${enabled} of ${filtered.length} selected`;
+        }
+
+        function updateWheel() {
+            if (!wheel) return;
+            const enabled = getEnabledCountries();
+            const segments = enabled.map(c => {
+                let text = '';
+                if (displayMode === 'both') text = `${c.flag} ${c.name}`;
+                else if (displayMode === 'flag') text = c.flag;
+                else text = c.name;
+                return { text, country: c };
+            });
+            wheel.updateSegments(segments);
+        }
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const countryListEl = document.getElementById('country-list');
+            const regionBtns = document.querySelectorAll('.region-btn');
+            const displayRadios = document.querySelectorAll('input[name="display"]');
+            const spinBtn = document.getElementById('spin-btn');
+            const modal = document.getElementById('result-modal');
+            const winnerFlag = document.getElementById('winner-flag');
+            const winnerText = document.getElementById('winner-text');
+            const modalClose = document.getElementById('modal-close');
+            const modalHide = document.getElementById('modal-hide');
+            const selectAllBtn = document.getElementById('select-all-btn');
+            const deselectAllBtn = document.getElementById('deselect-all-btn');
+
+            // Initialize Wheel
+            wheel = new PickerWheel('wheel-canvas', {
+                onSpinStart: () => {
+                    Utils.playSound('tick');
+                },
+                onSpinEnd: (winner) => {
+                    currentWinner = winner.country;
+
+                    if (displayMode === 'flag' || displayMode === 'both') {
+                        winnerFlag.textContent = winner.country.flag;
+                        winnerFlag.style.display = 'block';
+                    } else {
+                        winnerFlag.style.display = 'none';
+                    }
+
+                    if (displayMode === 'name' || displayMode === 'both') {
+                        winnerText.textContent = winner.country.name;
+                        winnerText.style.display = 'block';
+                    } else {
+                        winnerText.style.display = 'none';
+                    }
+
+                    modal.classList.add('open');
+                    Utils.triggerConfetti();
+                    Utils.playSound('win');
+                }
+            });
+
+            // Initial Render
+            renderCountryList();
+
+            // Event Listeners
+            // NOTE: Spin button listener is set up later with settings
+            // spinBtn.addEventListener('click', () => {
+            //     const enabled = getEnabledCountries();
+            //     if (enabled.length > 0) {
+            //         wheel.spin();
+            //     } else {
+            //         alert('Please select at least one country!');
+            //     }
+            // });
+
+            regionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    regionBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentRegion = btn.dataset.region;
+                    renderCountryList();
+                });
+            });
+
+            countryListEl.addEventListener('change', (e) => {
+                if (e.target.classList.contains('country-checkbox')) {
+                    const idx = parseInt(e.target.dataset.index);
+                    countries[idx].enabled = e.target.checked;
+                    updateCountryCount();
+                    updateWheel();
+                }
+            });
+
+            displayRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    displayMode = e.target.value;
+                    updateWheel();
+                });
+            });
+
+            selectAllBtn.addEventListener('click', () => {
+                getFilteredCountries().forEach(c => {
+                    const idx = countries.findIndex(x => x.name === c.name);
+                    countries[idx].enabled = true;
+                });
+                renderCountryList();
+            });
+
+            deselectAllBtn.addEventListener('click', () => {
+                getFilteredCountries().forEach(c => {
+                    const idx = countries.findIndex(x => x.name === c.name);
+                    countries[idx].enabled = false;
+                });
+                renderCountryList();
+            });
+
+            modalClose.addEventListener('click', () => {
+                modal.classList.remove('open');
+            });
+
+            modalHide.addEventListener('click', () => {
+                if (currentWinner) {
+                    const idx = countries.findIndex(c => c.name === currentWinner.name);
+                    if (idx !== -1) {
+                        countries[idx].enabled = false;
+                        renderCountryList();
+                    }
+                }
+                modal.classList.remove('open');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('open');
+            });
+
+            // ============ ADVANCED SETTINGS ============
+            const advManager = initAdvancedSettings(wheel, 'country-picker-advanced');
+            const advSettings = advManager.settings;
+
+            // Update onSpinEnd to use manager features
+            wheel.onSpinEnd = (winner) => {
+                currentWinner = winner.country;
+                advManager.hideManualStopButton();
+                advManager.incrementSpinCount();
+
+                if (displayMode === 'flag' || displayMode === 'both') {
+                    winnerFlag.textContent = winner.country.flag;
+                    winnerFlag.style.display = 'block';
+                } else {
+                    winnerFlag.style.display = 'none';
+                }
+
+                if (displayMode === 'name' || displayMode === 'both') {
+                    winnerText.textContent = winner.country.name;
+                    winnerText.style.display = 'block';
+                } else {
+                    winnerText.style.display = 'none';
+                }
+
+                modal.classList.add('open');
+                if (advSettings.confetti) Utils.triggerConfetti();
+                if (advSettings.sound) Utils.playSound('win');
+            };
+
+            wheel.onSpinStart = () => {
+                if (advSettings.sound) Utils.playSound('start');
+            };
+
+            // Set up spin button with advanced settings
+            spinBtn.onclick = () => {
+                const enabled = getEnabledCountries();
+                if (enabled.length > 0) {
+                    advManager.showManualStopButton();
+                    wheel.spin(advSettings.duration * 1000, advSettings.speedLevel);
+                } else {
+                    alert('Please select at least one country!');
+                }
+            };
+
+            // Re-apply display mode on wheel updates
+            const originalUpdateWheel = updateWheel;
+            updateWheel = () => {
+                originalUpdateWheel();
+                // Wheel update might reset some things, but advanced-settings handles permanent config
+            };
+
+            setTimeout(() => {
+                // Ensure initial state is correct beyond the generic manager init
+                updateWheel();
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
